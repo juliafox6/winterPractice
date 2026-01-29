@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>История обработок</title>
+    <style>
+        body { font-family: serif; }
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 90%;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 6px 10px;
+            text-align: center;
+        }
+        th { font-weight: bold; }
+        a { color: blue; }
+    </style>
+</head>
+<body>
+
+<h2>История обработок</h2>
+<a href="/">← Назад</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Дата</th>
+        <th>Файл</th>
+        <th>Кол-во мячей</th>
+        <th>Средняя уверенность</th>
+        <th>Просмотр</th>
+    </tr>
+
+    {% for d in history %}
+    <tr>
+        <td>{{ d.id }}</td>
+        <td>{{ d.timestamp }}</td>
+        <td>{{ d.filename }}</td>
+        <td>{{ d.objects_count }}</td>
+        <td>{{ d.avg_confidence }}</td>
+        <td><a href="{{ d.result_url }}">Результат</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
+

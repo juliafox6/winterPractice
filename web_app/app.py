@@ -13,6 +13,7 @@ from ultralytics import YOLO
 from starlette.templating import Jinja2Templates
 
 from stats import router, RequestEntry, save_entry, load_history, get_summary, generate_pdf, generate_excel
+from detector_stats import save_detection, load_detections, DetectionEntry
 
 # --------------------
 # Paths
@@ -91,6 +92,28 @@ async def predict(file: UploadFile = File(...)):
             endpoint="/predict",
             payload=input_data,
             processing_time_ms=elapsed,
+        ))
+
+        detections = 0
+        avg_conf = 0.0
+
+        for r in model.predict(
+            source=str(upload_path),
+            conf=0.25,
+            imgsz=640,
+            device="cpu",
+        ):
+            if r.boxes is not None and len(r.boxes) > 0:
+                detections = len(r.boxes)
+                avg_conf = float(r.boxes.conf.mean())
+
+        save_detection(DetectionEntry(
+            id=file_id[:8],
+            timestamp=datetime.utcnow(),
+            filename=file.filename,
+            objects_count=detections,
+            avg_confidence=round(avg_conf, 2),
+            result_url=f"/static/results/{file_id}/{output_image.name}",
         ))
 
         return JSONResponse({
@@ -193,5 +216,13 @@ def stats_excel():
         path,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         filename="report.xlsx"
+    )
+
+@app.get("/detections", response_class=HTMLResponse)
+def detections_page(request: Request):
+    history = load_detections()
+    return templates.TemplateResponse(
+        "detections.html",
+        {"request": request, "history": history}
     )
 

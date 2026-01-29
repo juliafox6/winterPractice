@@ -25,5 +25,14 @@
       "type": "video"
     },
     "processing_time_ms": 44747.99871444702
+  },
+  {
+    "timestamp": "2026-01-29 20:44:09.933064",
+    "endpoint": "/predict",
+    "payload": {
+      "filename": "6.jpg",
+      "type": "image"
+    },
+    "processing_time_ms": 2063.4982585906982
   }
 ]
