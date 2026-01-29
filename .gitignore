@@ -1,0 +1,6 @@
+# Dataset
+
+model_pipeline/datasets/football_ball/data/
+__pycache__/
+*.pyc
+.DS_Store

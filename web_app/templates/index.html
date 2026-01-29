@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Football Ball Detection</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        video, img { max-width: 100%; margin-top: 20px; }
+        .status { margin-top: 15px; font-weight: bold; }
+        .path { font-size: 14px; color: #555; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>⚽ Football Ball Detection</h1>
+
+<input type="file" id="fileInput">
+<button onclick="upload()">Run detection</button>
+
+<div class="status" id="status"></div>
+<div id="output"></div>
+
+<script>
+async function upload() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+        alert("Choose a file!");
+        return;
+    }
+
+    const status = document.getElementById("status");
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+    status.innerText = "⏳ Processing… please wait";
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/predict", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+    status.innerText = "✅ Done";
+
+    if (data.type === "image") {
+        const img = document.createElement("img");
+        img.src = data.result_url;
+        output.appendChild(img);
+    }
+
+    if (data.type === "video") {
+        const video = document.createElement("video");
+        video.src = data.result_url;
+        video.controls = true;
+        video.autoplay = true;
+        output.appendChild(video);
+    }
+
+    const p = document.createElement("div");
+    p.className = "path";
+    p.innerText = "Saved to: " + data.save_path;
+    output.appendChild(p);
+}
+</script>
+
+</body>
+</html>
+

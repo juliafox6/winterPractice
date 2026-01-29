@@ -1,0 +1,9 @@
+path: football_ball/data
+
+train: train/images
+val: valid/images
+test: test/images
+
+names:
+  0: ball
+
