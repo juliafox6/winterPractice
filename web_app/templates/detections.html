@@ -3,20 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <title>История обработок</title>
-    <style>
-        body { font-family: serif; }
-        table {
-            border-collapse: collapse;
-            margin-top: 20px;
-            width: 90%;
-        }
-        th, td {
-            border: 1px solid #444;
-            padding: 6px 10px;
-            text-align: center;
-        }
-        th { font-weight: bold; }
-        a { color: blue; }
+      <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                     "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+        background: #0f1115;
+        color: #e6e6eb;
+        line-height: 1.6;
+      }
+
+      body {
+        margin: 0;
+        padding: 2rem;
+        max-width: 1100px;
+        margin-inline: auto;
+      }
+
+      h1, h2, h3 {
+        font-weight: 600;
+        line-height: 1.25;
+        margin-top: 2rem;
+      }
+
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; opacity: 0.9; }
+      h3 { font-size: 1.2rem; opacity: 0.85; }
+
+      p {
+        margin: 0.5rem 0 1rem;
+        opacity: 0.9;
+      }
+
+      a {
+        color: #7aa2f7;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      form {
+        margin: 1.5rem 0;
+      }
+
+      input, select, textarea, button {
+        font: inherit;
+        background: #161821;
+        color: inherit;
+        border: 1px solid #2a2e3e;
+        border-radius: 8px;
+        padding: 0.6rem 0.75rem;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #7aa2f7;
+      }
+
+      button {
+        cursor: pointer;
+        background: #7aa2f7;
+        color: #0f1115;
+        border: none;
+        font-weight: 600;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        background: #161821;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th, td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid #2a2e3e;
+        text-align: left;
+      }
+
+      th {
+        font-weight: 600;
+        background: #1b1e2b;
+      }
+
+      tr:hover td {
+        background: #1c2030;
+      }
+
+      img, video {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 1rem 0;
+        background: #000;
+      }
+
+      code, pre {
+        background: #161821;
+        border: 1px solid #2a2e3e;
+        border-radius: 8px;
+      }
+
+      code {
+        padding: 0.15rem 0.35rem;
+      }
+
+      pre {
+        padding: 1rem;
+        overflow-x: auto;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid #2a2e3e;
+        margin: 2rem 0;
+      }
     </style>
 </head>
 <body>

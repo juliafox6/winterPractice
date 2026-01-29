@@ -6,5 +6,29 @@
     "objects_count": 1,
     "avg_confidence": 0.79,
     "result_url": "/static/results/4abecd53bad044af8004e84ac73b1745/4abecd53bad044af8004e84ac73b1745_6.jpg"
+  },
+  {
+    "id": "137f18a2",
+    "timestamp": "2026-01-29 21:00:33.349937",
+    "filename": "6.jpg",
+    "objects_count": 1,
+    "avg_confidence": 0.79,
+    "result_url": "/static/results/137f18a2c0184bd983abb54a55052949/137f18a2c0184bd983abb54a55052949_6.jpg"
+  },
+  {
+    "id": "4146350b",
+    "timestamp": "2026-01-29 21:09:15.242769",
+    "filename": "6.jpg",
+    "objects_count": 1,
+    "avg_confidence": 0.79,
+    "result_url": "/static/results/4146350b20904da6a2cc1bb1ea220027/4146350b20904da6a2cc1bb1ea220027_6.jpg"
+  },
+  {
+    "id": "2066e7af",
+    "timestamp": "2026-01-29 21:14:35.698728",
+    "filename": "6.jpg",
+    "objects_count": 1,
+    "avg_confidence": 0.79,
+    "result_url": "/static/results/2066e7af2594496b861d9837a5cda7e8/2066e7af2594496b861d9837a5cda7e8_6.jpg"
   }
 ]

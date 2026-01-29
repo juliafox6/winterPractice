@@ -2,6 +2,7 @@
 
 model_pipeline/datasets/football_ball/data/
 web_app/uploads/
+web_app/static/results/
 __pycache__/
 *.pyc
 .DS_Store
