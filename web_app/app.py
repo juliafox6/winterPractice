@@ -68,7 +68,7 @@ async def predict(file: UploadFile = File(...)):
     suffix = upload_path.suffix.lower()
     input_data = {"filename": file.filename, "type": "image" if suffix in [".jpg", ".jpeg", ".png"] else "video"}
 
-    # ---------------- IMAGE ----------------
+    # IMAGE
     if suffix in [".jpg", ".jpeg", ".png"]:
         result_dir = RESULTS_DIR / file_id
         result_dir.mkdir(exist_ok=True)
@@ -122,7 +122,7 @@ async def predict(file: UploadFile = File(...)):
             "save_path": str(result_dir),
         })
 
-    # ---------------- VIDEO ----------------
+    # VIDEO
     elif suffix in [".mp4", ".avi", ".mov"]:
         result_dir = RESULTS_DIR / file_id
         result_dir.mkdir(exist_ok=True)
@@ -160,7 +160,7 @@ async def predict(file: UploadFile = File(...)):
         cap.release()
         writer.release()
 
-        # Конвертируем в совместимый mp4 для браузера
+        # Конвертация в совместимый mp4 для браузера
         final_video = result_dir / "result_browser.mp4"
         subprocess.run([
             "ffmpeg", "-y",
