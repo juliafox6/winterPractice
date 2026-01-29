@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2026-01-29 18:37:05.853834",
+    "endpoint": "/predict",
+    "payload": {
+      "filename": "6.jpg",
+      "type": "image"
+    },
+    "processing_time_ms": 1925.5683422088623
+  },
+  {
+    "timestamp": "2026-01-29 18:38:46.023593",
+    "endpoint": "/predict",
+    "payload": {
+      "filename": "test.mp4",
+      "type": "video"
+    },
+    "processing_time_ms": 37058.83479118347
+  }
+]

@@ -4,3 +4,4 @@ model_pipeline/datasets/football_ball/data/
 __pycache__/
 *.pyc
 .DS_Store
+model_pipeline/app.py.old

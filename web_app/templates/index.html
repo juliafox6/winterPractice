@@ -65,6 +65,25 @@ async function upload() {
 }
 </script>
 
+<hr>
+
+<h2>📊 Статистика</h2>
+
+<button onclick="loadStats()">Обновить статистику</button>
+<button onclick="window.open('/stats/report/pdf')">PDF отчёт</button>
+<button onclick="window.open('/stats/report/excel')">Excel отчёт</button>
+
+<pre id="stats-output">Загрузка...</pre>
+
+<script>
+async function loadStats() {
+    const res = await fetch("/stats/summary");
+    const data = await res.json();
+    document.getElementById("stats-output").textContent =
+        JSON.stringify(data, null, 2);
+}
+</script>
+
 </body>
 </html>
 

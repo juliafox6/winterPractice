@@ -1,14 +1,18 @@
 import shutil
 import uuid
 from pathlib import Path
+from datetime import datetime
+import subprocess
+import time
 
 import cv2
 from fastapi import FastAPI, File, UploadFile, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from ultralytics import YOLO
 from starlette.templating import Jinja2Templates
-import subprocess
+
+from stats import router, RequestEntry, save_entry, load_history, get_summary, generate_pdf, generate_excel
 
 # --------------------
 # Paths
@@ -36,13 +40,16 @@ RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.include_router(router)
 
 # --------------------
 # Model
 # --------------------
 model = YOLO(str(MODEL_PATH))
 
-
+# --------------------
+# Routes
+# --------------------
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -50,6 +57,7 @@ async def index(request: Request):
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    start_time = time.time()
     file_id = uuid.uuid4().hex
     upload_path = UPLOAD_DIR / f"{file_id}_{file.filename}"
 
@@ -57,6 +65,7 @@ async def predict(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     suffix = upload_path.suffix.lower()
+    input_data = {"filename": file.filename, "type": "image" if suffix in [".jpg", ".jpeg", ".png"] else "video"}
 
     # ---------------- IMAGE ----------------
     if suffix in [".jpg", ".jpeg", ".png"]:
@@ -76,6 +85,14 @@ async def predict(file: UploadFile = File(...)):
 
         output_image = next(result_dir.glob("*.jpg"))
 
+        elapsed = (time.time() - start_time) * 1000  # ms
+        save_entry(RequestEntry(
+            timestamp=datetime.utcnow(),
+            endpoint="/predict",
+            payload=input_data,
+            processing_time_ms=elapsed,
+        ))
+
         return JSONResponse({
             "type": "image",
             "result_url": f"/static/results/{file_id}/{output_image.name}",
@@ -92,30 +109,17 @@ async def predict(file: UploadFile = File(...)):
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
 
-        output_video = result_dir / "result.mp4"
-
+        temp_video = result_dir / "temp.mp4"
         writer = cv2.VideoWriter(
-            str(output_video),
-            cv2.VideoWriter_fourcc(*"avc1"),
+            str(temp_video),
+            cv2.VideoWriter_fourcc(*"mp4v"),
             fps,
             (width, height),
         )
-       
-        if not writer.isOpened():
-            print("avc1 is not supported, falling back to mp4v")
-            writer = cv2.VideoWriter(
-                str(output_video),
-                cv2.VideoWriter_fourcc(*"mp4v"),
-                fps,
-                (width, height),
-            )
 
         if not writer.isOpened():
             cap.release()
-            return JSONResponse(
-                {"error": "Could not initialize video writer (codec issue)"},
-                status_code=500,
-            )
+            return JSONResponse({"error": "Could not initialize video writer"}, status_code=500)
 
         frame_count = 0
 
@@ -132,18 +136,25 @@ async def predict(file: UploadFile = File(...)):
 
         cap.release()
         writer.release()
-        
-        final_video = result_dir / "result_browser.mp4"
 
-        cmd = [
+        # Конвертируем в совместимый mp4 для браузера
+        final_video = result_dir / "result_browser.mp4"
+        subprocess.run([
             "ffmpeg", "-y",
-            "-i", str(output_video),
+            "-i", str(temp_video),
             "-vcodec", "libx264",
             "-pix_fmt", "yuv420p",
-            str(final_video),
-        ]
+            str(final_video)
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        temp_video.unlink(missing_ok=True)
 
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        elapsed = (time.time() - start_time) * 1000
+        save_entry(RequestEntry(
+            timestamp=datetime.utcnow(),
+            endpoint="/predict",
+            payload=input_data,
+            processing_time_ms=elapsed,
+        ))
 
         return JSONResponse({
             "type": "video",
@@ -153,8 +164,34 @@ async def predict(file: UploadFile = File(...)):
         })
 
     else:
-        return JSONResponse(
-            {"error": "Unsupported file format"},
-            status_code=400
-        )
+        return JSONResponse({"error": "Unsupported file format"}, status_code=400)
+
+
+# --------------------
+# Stats Endpoints
+# --------------------
+@app.get("/stats/history")
+def stats_history():
+    return load_history()
+
+
+@app.get("/stats/summary")
+def stats_summary():
+    return get_summary()
+
+
+@app.get("/stats/report/pdf")
+def stats_pdf():
+    path = generate_pdf()
+    return FileResponse(path, media_type="application/pdf", filename="report.pdf")
+
+
+@app.get("/stats/report/excel")
+def stats_excel():
+    path = generate_excel()
+    return FileResponse(
+        path,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        filename="report.xlsx"
+    )
 
