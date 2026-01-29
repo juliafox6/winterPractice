@@ -18,7 +18,7 @@ repo_path = Path(
 
 print(f"Dataset downloaded to: {repo_path}")
 
-# Очистим целевую папку
+# Очистка целевой папки
 if TARGET_DIR.exists():
     print("Removing existing dataset directory...")
     shutil.rmtree(TARGET_DIR)
@@ -27,7 +27,6 @@ TARGET_DIR.mkdir(parents=True)
 
 print("Copying dataset files...")
 
-# Копируем ВСЁ содержимое репозитория
 for item in repo_path.iterdir():
     dest = TARGET_DIR / item.name
     if item.is_dir():
